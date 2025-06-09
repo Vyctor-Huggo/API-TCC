@@ -12,7 +12,7 @@ async function sendPasswordResetEmail(to, token) {
     const link = `https://localhost:3000/reset-password?token=${token}`;
     await transporter.sendMail({
         from: '"João Johnson" <joaojohnson1504@gmail.com>', // email de quem ta enviando
-        to: "vyctorhuggo322@gmail.com, joaojbatatafrita@gmail.com", //email de quem ta recebendo, pode ser mais de um
+        to: `${to}`, //email de quem ta recebendo, pode ser mais de um
         subject: 'Redefinição de Senha',
         text: 'receba',
         html: `<p>Para redefinir sua senha, clique no link abaixo:</p><a href="${link}">${link}</a>`
