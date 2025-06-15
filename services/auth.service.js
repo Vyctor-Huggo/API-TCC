@@ -147,17 +147,19 @@ exports.resetPassword = async (token, newPassword) => {
 };
 
 /**
- * Verifica se o token de reset é válido.
+ * Verifica se o código de verificação é válido para o email fornecido.
  * 
- * @param {string} token - Token enviado ao usuário
- * @returns {Promise<Object>} Objeto indicando se o token é válido
- * @throws {Error} Se o token for inválido ou expirado
+ * @param {string} email - Email do usuário
+ * @param {string} code - Código (últimos 5 caracteres do token)
+ * @returns {Promise<Object>} Resultado da verificação
+ * @throws {Error} Se não encontrar ou se estiver expirado
  */
-exports.verifyResetToken = async (token) => {
-  const record = await authRepository.findResetToken(token);
+exports.verifyResetCode = async (email, code) => {
+  const record = await authRepository.findResetTokenByEmailAndCode(email, code);
 
-  if (!record) throw new Error('Token inválido');
-  if (record.expiresAt < new Date()) throw new Error('Token expirado');
+  if (!record) throw new Error('Código inválido ou não encontrado');
+
+  if (record.expiresAt < new Date()) throw new Error('Código expirado');
 
   return { valid: true };
 };
