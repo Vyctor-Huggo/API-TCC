@@ -10,15 +10,20 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendPasswordResetEmail = async (to, token) => {
-  const resetLink = `http://localhost:3000/reset-password?token=${token}`;
-  await transporter.sendMail({
-    from: `"Seu App" <${process.env.EMAIL_USER}>`,
-    to,
-    subject: "Redefinição de senha",
-    html: `
-      <h3>Redefinição de Senha</h3>
-      <p>Clique no link abaixo para redefinir sua senha:</p>
-      <a href="${resetLink}">${resetLink}</a>
-    `
-  });
+  const code = token.slice(-5); // captura os últimos 5 dígitos
+  try {
+    const info = await transporter.sendMail({
+      from: `"Seu App" <joaojohnson1504@gmail.com>`,
+      to,
+      subject: "Código para redefinição de senha",
+      html: `
+        <h3>Redefinição de Senha</h3>
+        <p>Use o código abaixo para confirmar sua identidade no app:</p>
+        <h2>${code}</h2>
+      `
+    });
+    console.log('Email enviado:', info.response);
+  } catch (error) {
+    console.error('Erro ao enviar email:', error);
+  }
 };
