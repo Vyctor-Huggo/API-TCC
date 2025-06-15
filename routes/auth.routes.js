@@ -50,6 +50,14 @@ router.post('/forgot-password', authController.requestReset);
  */
 router.post('/reset-password', authController.resetPassword);
 
+/**
+ * @route POST /auth/verify-code
+ * @summary Verifica se o token de redefinição é válido
+ * @description Recebe o token no corpo da requisição.
+ */
+router.post('/verify-code', authController.verifyCode);
+
+
 app.use('/auth', router);
 }
 

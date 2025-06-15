@@ -145,3 +145,19 @@ exports.resetPassword = async (token, newPassword) => {
   await authRepository.updatePassword(record.userId, hashedPassword);
   await authRepository.deleteResetToken(token);
 };
+
+/**
+ * Verifica se o token de reset é válido.
+ * 
+ * @param {string} token - Token enviado ao usuário
+ * @returns {Promise<Object>} Objeto indicando se o token é válido
+ * @throws {Error} Se o token for inválido ou expirado
+ */
+exports.verifyResetToken = async (token) => {
+  const record = await authRepository.findResetToken(token);
+
+  if (!record) throw new Error('Token inválido');
+  if (record.expiresAt < new Date()) throw new Error('Token expirado');
+
+  return { valid: true };
+};

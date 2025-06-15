@@ -126,3 +126,26 @@ exports.resetPassword = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * Controller para verificar se um token de redefinição é válido.
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ * @param {Function} next 
+ */
+exports.verifyCode = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: 'Token não fornecido' });
+    }
+
+    const result = await authService.verifyResetToken(token);
+    res.status(200).json(result);
+
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
