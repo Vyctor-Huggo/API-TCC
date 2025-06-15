@@ -22,7 +22,6 @@ model User {
 
 } 
 
-//reset de senha
 model PasswordResetToken {
   id        String   @id @default(cuid())
   token     String   @unique

@@ -40,9 +40,16 @@
   exports.findUserByEmail = async (email) => {
     return await prisma.user.findUnique({
       where: { email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true, // necessário para o bcrypt.compare
+        createdAt: true
+      }
     });
-
   };
+
 
   /**
    * Busca um usuário pelo ID.
@@ -52,7 +59,7 @@
    */
   exports.findUserById = async (userId) => {
     return await prisma.user.findUnique({
-      where: { userId },
+      where: { id: userId },
       select: {
         name: true,
         email: true,
@@ -86,13 +93,13 @@ exports.findResetToken = async (token) => {
   return await prisma.passwordResetToken.findUnique({ where: { token } });
 };
 
-exports.updatePassword = async (userId, newPassword) => {
-  const hash = await bcrypt.hash(newPassword, 10);
-  await prisma.user.update({
+exports.updatePassword = async (userId, hashedPassword) => {
+  return await prisma.user.update({
     where: { id: userId },
-    data: { password: hash }
+    data: { password: hashedPassword }
   });
 };
+
 
 exports.deleteResetToken = async (token) => {
   await prisma.passwordResetToken.delete({ where: { token } });

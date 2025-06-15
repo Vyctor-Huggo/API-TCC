@@ -76,13 +76,17 @@ exports.updateUserPassword = async (req, res) => {
 
   try {
     const userId = req.user.id; // Pegando o id que o middleware inseriu no req.user
+    
+    if (!req.body.newPassword) {
+      return res.status(400).json({ error: "Nova senha não fornecida" });
+    }
 
     const user = await authService.updateUserPassword(userId, req.body);
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
-0
+
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: "Erro ao atualizar perfil: " + err.message });

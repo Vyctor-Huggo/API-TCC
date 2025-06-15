@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const SECRET_KEY = process.env.SECRET_KEY;
 
-const { sendPasswordResetEmail } = require('../providers/mailProvider');
+const { sendPasswordResetEmail } = require('../providers/email.provider');
 const { v4: uuidv4 } = require('uuid');
 
 /**
@@ -92,13 +92,11 @@ exports.loginUser = async ({ email, password }) => {
   };
 };
 
-exports.updateUserPassword = async (email, newPassword) => {
+exports.updateUserPassword = async (userId, { newPassword }) => {
   const hash = await bcrypt.hash(newPassword, 10);
+  const user = await authRepository.updatePassword(userId, hash);
 
-  const user = await authRepository.updatePasswordByEmail(email, hash)
-  if (!user) throw new Error("Update: Usuario não encontrado");
-
-  console.log("Update: Senha atualizada com sucesso.")
+  if (!user) throw new Error("Usuário não encontrado");
 
   const token = generateToken(user);
 
@@ -110,8 +108,8 @@ exports.updateUserPassword = async (email, newPassword) => {
     },
     token
   };
-
 };
+
 
 //reset de senha
 
@@ -129,7 +127,7 @@ exports.requestPasswordReset = async (email) => {
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // expira em 1 hora
 
   await authRepository.saveResetToken(user.id, token, expiresAt);
-  await sendPasswordResetEmail(user.email, token);
+  await sendPasswordResetEmail(email, token);
 };
 
 /**
@@ -143,6 +141,7 @@ exports.resetPassword = async (token, newPassword) => {
   const record = await authRepository.findResetToken(token);
   if (!record || record.expiresAt < new Date()) throw new Error('Token inválido ou expirado');
 
-  await authRepository.updatePassword(record.userId, newPassword);
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  await authRepository.updatePassword(record.userId, hashedPassword);
   await authRepository.deleteResetToken(token);
 };
