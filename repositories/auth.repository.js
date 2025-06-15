@@ -103,17 +103,21 @@ exports.findResetToken = async (token) => {
 exports.findResetTokenByEmailAndCode = async (email, code) => {
   return await prisma.passwordResetToken.findFirst({
     where: {
-      email,
       token: {
         endsWith: code,
       },
+      user: {
+        email: email,
+      },
     },
     orderBy: {
-      createdAt: 'desc', // opcional, pega o mais recente
+      createdAt: 'desc',
+    },
+    include: {
+      user: true,
     },
   });
 };
-
 
 exports.updatePassword = async (userId, hashedPassword) => {
   return await prisma.user.update({

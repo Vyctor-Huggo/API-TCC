@@ -139,10 +139,12 @@ exports.verifyCode = async (req, res, next) => {
     const { email, code } = req.body;
 
     if (!email || !code) {
+      console.log('erro aqui cont');
       return res.status(400).json({ error: 'Email e código são obrigatórios' });
     }
 
     const result = await authService.verifyResetCode(email, code);
+    console.log("resultado: ", result);
     res.status(200).json(result);
 
   } catch (err) {
