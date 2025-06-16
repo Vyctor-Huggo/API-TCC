@@ -138,7 +138,7 @@ exports.requestPasswordReset = async (email) => {
  * @throws {Error} Se o token for inválido ou expirado
  */
 exports.resetPassword = async (email, code, newPassword) => {
-  const record = await authRepository.findResetTokenByEmailAndCode(code, email);
+  const record = await authRepository.findResetTokenByEmailAndCode(email, code);
   if (!record || record.expiresAt < new Date()) throw new Error('Token inválido ou expirado');
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
