@@ -120,7 +120,7 @@ exports.requestReset = async (req, res, next) => {
  */
 exports.resetPassword = async (req, res, next) => {
   try {
-    await authService.resetPassword(req.body.token, req.body.newPassword);
+    await authService.resetPassword(req.body.email, req.body.code, req.body.newPassword);
     res.status(200).json({ message: 'Senha redefinida com sucesso' });
   } catch (err) {
     next(err);

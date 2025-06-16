@@ -89,10 +89,6 @@ exports.saveResetToken = async (userId, token, expiresAt) => {
   });
 };
 
-exports.findResetToken = async (token) => {
-  return await prisma.passwordResetToken.findUnique({ where: { token } });
-};
-
 /**
  * Busca um token de reset por email e código (últimos 5 caracteres).
  * 

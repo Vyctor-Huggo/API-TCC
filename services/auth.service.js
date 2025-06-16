@@ -133,17 +133,17 @@ exports.requestPasswordReset = async (email) => {
 /**
  * Redefine a senha do usuário com base no token de reset.
  * 
- * @param {string} token - Token de redefinição recebido no e-mail
+ * @param {string} code - 5 ultimos digitos do Token de redefinição recebido no e-mail
  * @param {string} newPassword - Nova senha do usuário
  * @throws {Error} Se o token for inválido ou expirado
  */
-exports.resetPassword = async (token, newPassword) => {
-  const record = await authRepository.findResetToken(token);
+exports.resetPassword = async (email, code, newPassword) => {
+  const record = await authRepository.findResetTokenByEmailAndCode(code, email);
   if (!record || record.expiresAt < new Date()) throw new Error('Token inválido ou expirado');
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
   await authRepository.updatePassword(record.userId, hashedPassword);
-  await authRepository.deleteResetToken(token);
+  await authRepository.deleteResetToken(record.token);
 };
 
 /**
