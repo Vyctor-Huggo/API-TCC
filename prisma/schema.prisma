@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EquipmentType {
+  ELECTRIC
+  WATER
+}
+
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -18,8 +23,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // relação com tokens de reset
   resetTokens PasswordResetToken[]
 
+  // relação com equipamentos
+  Equipment Equipment[]
 } 
 
 model PasswordResetToken {
@@ -31,4 +39,43 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   @@index([token])
+}
+
+model Equipment {
+  id        String         @id @default(uuid())
+  name      String
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      EquipmentType
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  energy    EnergyEquipment?
+  water     WaterEquipment?
+
+  @@index([userId, type])
+}
+
+/// Só para equipamentos elétricos:
+model EnergyEquipment {
+  equipmentId String     @id
+  equipment   Equipment  @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  kw          Float
+  time        Int
+  totalConsum Float
+
+  @@map("energy_equipments")
+}
+
+/// Só para equipamentos hídricos:
+model WaterEquipment {
+  equipmentId String     @id
+  equipment   Equipment  @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  flux        Float   // vazão
+  time        Int
+  totalConsum Float
+
+  @@map("water_equipments")
 }
