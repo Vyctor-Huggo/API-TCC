@@ -9,7 +9,7 @@ const passwordService = require("../services/password.service");
  */
 exports.resetPassword = async (req, res, next) => {
   try {
-    await authService.resetPassword(req.body.email, req.body.code, req.body.newPassword);
+    await passwordService.resetPassword(req.body.email, req.body.code, req.body.newPassword);
     res.status(200).json({ message: 'Senha redefinida com sucesso' });
   } catch (err) {
     next(err);
