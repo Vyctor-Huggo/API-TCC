@@ -5,8 +5,8 @@ const equipmentService = require('../services/equipments.service');
  */
 exports.createElectric = async (req, res) => {
   try {
-    const data = { ...req.body, id_usuario: req.userId };
-    const equipment = await equipmentService.addElectricEquipment(data);
+    const { userId, name, kw, time, totalConsum } = req.body;
+    const equipment = await equipmentService.addElectricEquipment({ userId, name, kw, time, totalConsum });
     res.status(201).json(equipment);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -15,7 +15,8 @@ exports.createElectric = async (req, res) => {
 
 exports.getAllElectric = async (req, res) => {
   try {
-    const equipments = await equipmentService.listElectricEquipments(req.userId);
+    console.log(req.user)
+    const equipments = await equipmentService.listElectricEquipments(req.user.id);
     res.status(200).json(equipments);
   } catch (err) {
     res.status(400).json({ error: err.message });

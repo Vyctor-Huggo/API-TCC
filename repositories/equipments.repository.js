@@ -2,37 +2,32 @@ const prisma = require("../infrastructures/prisma");
 /**
  * Equipamentos Elétricos
  */
-async function createElectricEquipment({ userId, nome, potencia, horasPorDia, consumoMes }) {
+async function createEnergyEquipment({ userId, name, kw, time, totalConsum }) {
   const equipment = await prisma.equipment.create({
     data: {
-      name: nome,
+      name: name,
+      userId: userId,
       type: 'ELECTRIC',
-      userId,
+      energy: {
+        create: {
+          kw: kw, //recebe em KW
+          time: time,
+          totalConsum: totalConsum,
+        },
+      },
+    },
+    include: {
+      energy: true,
     },
   });
 
-  await prisma.energyEquipment.create({
-    data: {
-      equipmentId: equipment.id,
-      kw: potencia / 1000,
-      time: horasPorDia,
-      totalConsum: consumoMes,
-    },
-  });
-
-  return {
-    id: equipment.id,
-    nome,
-    potencia,
-    horasPorDia,
-    consumoMes,
-  };
+  return equipment;
 }
 
-async function getElectricEquipmentsByUser(userId) {
+async function getAllEnergyEquipmentsByUser(userId) {
   const equipments = await prisma.equipment.findMany({
     where: { userId, type: 'ELECTRIC' },
-    include: { energyEquipment: true },
+    include: { energy: true },
   });
 
   return equipments.map((eq) => ({
@@ -44,7 +39,7 @@ async function getElectricEquipmentsByUser(userId) {
   }));
 }
 
-async function updateElectricEquipment(id, { nome, potencia, horasPorDia, consumoMes }) {
+async function updateEnergyEquipment(id, { nome, kw, time, totalConsum }) {
   await prisma.equipment.update({
     where: { id },
     data: { name: nome },
@@ -53,22 +48,22 @@ async function updateElectricEquipment(id, { nome, potencia, horasPorDia, consum
   await prisma.energyEquipment.update({
     where: { equipmentId: id },
     data: {
-      kw: potencia / 1000,
-      time: horasPorDia,
-      totalConsum: consumoMes,
+      kw: kw,
+      time: time,
+      totalConsum: totalConsum,
     },
   });
 
   return {
     id,
     nome,
-    potencia,
-    horasPorDia,
-    consumoMes,
+    kw,
+    time,
+    totalConsum,
   };
 }
 
-async function deleteElectricEquipment(id) {
+async function deleteEnergyEquipment(id) {
   await prisma.energyEquipment.delete({
     where: { equipmentId: id },
   });
@@ -159,10 +154,10 @@ async function deleteWaterEquipment(id) {
 
 module.exports = {
   // Energia
-  createElectricEquipment,
-  getElectricEquipmentsByUser,
-  updateElectricEquipment,
-  deleteElectricEquipment,
+  createEnergyEquipment,
+  getAllEnergyEquipmentsByUser,
+  updateEnergyEquipment,
+  deleteEnergyEquipment,
 
   // Água
   createWaterEquipment,
