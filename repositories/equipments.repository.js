@@ -32,10 +32,10 @@ async function getAllEnergyEquipmentsByUser(userId) {
 
   return equipments.map((eq) => ({
     id: eq.id,
-    nome: eq.name,
-    potencia: (eq.energyEquipment?.kw || 0) * 1000,
-    horasPorDia: eq.energyEquipment?.time || 0,
-    consumoMes: eq.energyEquipment?.totalConsum || 0,
+    name: eq.name,
+    kw: (eq.energy?.kw || 0) * 1000,
+    time: eq.energy?.time || 0,
+    totalConsum: eq.energy?.totalConsum || 0,
   }));
 }
 
