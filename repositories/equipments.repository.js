@@ -1,71 +1,88 @@
 const prisma = require("../infrastructures/prisma");
 
-// 🌟 CRUD Genérico da tabela Equipment
-async function createEquipment(data) {
-  return await prisma.equipment.create({ data });
-}
-
-async function getEquipmentsByUser(userId, type) {
-  return await prisma.equipment.findMany({
-    where: { userId, type },
-    include: {
-      energy: true,
-      water: true,
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-}
-
-async function updateEquipment(id, data) {
-  return await prisma.equipment.update({
-    where: { id },
-    data,
-  });
-}
-
-async function deleteEquipment(id) {
-  return await prisma.equipment.delete({
-    where: { id },
-  });
-}
-
-// 🌟 EnergyEquipment específico
-async function createEnergyData(equipmentId, data) {
-  return await prisma.energyEquipment.create({
-    data: { equipmentId, ...data },
-  });
-}
-
-async function updateEnergyData(equipmentId, data) {
-  return await prisma.energyEquipment.update({
-    where: { equipmentId },
-    data,
-  });
-}
-
-// 🌟 WaterEquipment específico
-async function createWaterData(equipmentId, data) {
-  return await prisma.waterEquipment.create({
-    data: { equipmentId, ...data },
-  });
-}
-
-async function updateWaterData(equipmentId, data) {
-  return await prisma.waterEquipment.update({
-    where: { equipmentId },
-    data,
-  });
-}
-
 module.exports = {
-  createEquipment,
-  getEquipmentsByUser,
-  updateEquipment,
-  deleteEquipment,
+  // Cria um novo equipamento elétrico
+  async createElectric({ userId, nome, potencia, horasPorDia, consumoMes }) {
+    const equipment = await prisma.equipment.create({
+      data: {
+        name: nome,
+        type: 'ELECTRIC',
+        userId: userId,
+      },
+    });
 
-  createEnergyData,
-  updateEnergyData,
+    await prisma.energyEquipment.create({
+      data: {
+        equipmentId: equipment.id,
+        kw: potencia / 1000, // converte para kW
+        time: horasPorDia,
+        totalConsum: consumoMes,
+      },
+    });
 
-  createWaterData,
-  updateWaterData,
+    return {
+      id: equipment.id,
+      nome,
+      potencia,
+      horasPorDia,
+      consumoMes,
+    };
+  },
+
+  // Lista todos os equipamentos elétricos de um usuário
+  async findAllElectricByUser(userId) {
+    const equipments = await prisma.equipment.findMany({
+      where: {
+        userId: userId,
+        type: 'ELECTRIC',
+      },
+      include: {
+        energyEquipment: true,
+      },
+    });
+
+    return equipments.map((eq) => ({
+      id: eq.id,
+      nome: eq.name,
+      potencia: (eq.energyEquipment?.kw || 0) * 1000,
+      horasPorDia: eq.energyEquipment?.time || 0,
+      consumoMes: eq.energyEquipment?.totalConsum || 0,
+    }));
+  },
+
+  // Atualiza um equipamento elétrico
+  async updateElectric({ id, nome, potencia, horasPorDia, consumoMes }) {
+    await prisma.equipment.update({
+      where: { id },
+      data: { name: nome },
+    });
+
+    await prisma.energyEquipment.update({
+      where: { equipmentId: id },
+      data: {
+        kw: potencia / 1000,
+        time: horasPorDia,
+        totalConsum: consumoMes,
+      },
+    });
+
+    return {
+      id,
+      nome,
+      potencia,
+      horasPorDia,
+      consumoMes,
+    };
+  },
+
+  // Deleta um equipamento elétrico
+  async deleteElectric(id) {
+    await prisma.energyEquipment.delete({
+      where: { equipmentId: id },
+    });
+
+    await prisma.equipment.delete({
+      where: { id },
+    });
+  },
 };
