@@ -27,7 +27,7 @@ async function editElectricEquipment(id, data) {
   if (!data || (!data.name && !data.kw && !data.time && !data.totalConsum)) {
     throw new Error('Dados insuficientes para atualização do equipamento.');
   }
-
+  
   return equipmentsRepository.updateEnergyEquipment(id, data);
 }
 

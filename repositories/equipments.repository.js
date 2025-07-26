@@ -76,45 +76,40 @@ async function deleteEnergyEquipment(id) {
 /**
  * Equipamentos de Água
  */
-async function createWaterEquipment({ userId, nome, litrosPorUso, usosPorDia, consumoMes }) {
+async function createWaterEquipment({ userId, name, l, time, totalConsum }) {
   const equipment = await prisma.equipment.create({
     data: {
-      name: nome,
+      name: name,
+      userId: userId,
       type: 'WATER',
-      userId,
+      energy: {
+        create: {
+          l: l, //recebe em litros
+          time: time,
+          totalConsum: totalConsum,
+        },
+      },
+    },
+    include: {
+      water: true,
     },
   });
 
-  await prisma.waterEquipment.create({
-    data: {
-      equipmentId: equipment.id,
-      litersPerUse: litrosPorUso,
-      usesPerDay: usosPorDia,
-      totalConsum: consumoMes,
-    },
-  });
-
-  return {
-    id: equipment.id,
-    nome,
-    litrosPorUso,
-    usosPorDia,
-    consumoMes,
-  };
+  return equipment;
 }
 
 async function getWaterEquipmentsByUser(userId) {
   const equipments = await prisma.equipment.findMany({
     where: { userId, type: 'WATER' },
-    include: { waterEquipment: true },
+    include: { water: true },
   });
 
   return equipments.map((eq) => ({
     id: eq.id,
-    nome: eq.name,
-    litrosPorUso: eq.waterEquipment?.litersPerUse || 0,
-    usosPorDia: eq.waterEquipment?.usesPerDay || 0,
-    consumoMes: eq.waterEquipment?.totalConsum || 0,
+    name: eq.name,
+    l: (eq.water?.l || 0) * 1000,
+    time: eq.water?.time || 0,
+    totalConsum: eq.waterz?.totalConsum || 0,
   }));
 }
 
