@@ -43,7 +43,7 @@ function equipmentsRouter(app) {
    * @summary Remove um equipamento elétrico
    * @description Exclui permanentemente um equipamento elétrico do banco de dados.
    */
-  router.delete('/electric/:id', equipmentController.deleteElectric);
+  router.delete('/delequipment/:id', equipmentController.deleteEquipment);
 
   // ===============================
   // 💧 Hídricos
@@ -69,13 +69,6 @@ function equipmentsRouter(app) {
    * @description Edita as informações de um equipamento hídrico específico, vinculado ao usuário autenticado.
    */
   router.put('/water/:id', equipmentController.updateWater);
-
-  /**
-   * @route DELETE /equipment/water/:id
-   * @summary Remove um equipamento hídrico
-   * @description Exclui permanentemente um equipamento hídrico do banco de dados.
-   */
-  router.delete('/water/:id', equipmentController.deleteWater);
 
   // Conectando ao app principal
   app.use('/equipment', router);

@@ -63,16 +63,6 @@ async function updateEnergyEquipment(id, { nome, kw, time, totalConsum }) {
   };
 }
 
-async function deleteEnergyEquipment(id) {
-  await prisma.energyEquipment.delete({
-    where: { equipmentId: id },
-  });
-
-  await prisma.equipment.delete({
-    where: { id },
-  });
-}
-
 /**
  * Equipamentos de Água
  */
@@ -109,21 +99,21 @@ async function getWaterEquipmentsByUser(userId) {
     name: eq.name,
     l: (eq.water?.l || 0) * 1000,
     time: eq.water?.time || 0,
-    totalConsum: eq.waterz?.totalConsum || 0,
+    totalConsum: eq.water?.totalConsum || 0,
   }));
 }
 
-async function updateWaterEquipment(id, { nome, litrosPorUso, usosPorDia, consumoMes }) {
+async function updateWaterEquipment(id, { nome, l, usosPorDia, consumoMes }) {
   await prisma.equipment.update({
     where: { id },
     data: { name: nome },
   });
 
-  await prisma.waterEquipment.update({
+  await prisma.energyEquipment.update({
     where: { equipmentId: id },
     data: {
-      litersPerUse: litrosPorUso,
-      usesPerDay: usosPorDia,
+      flux: l,
+      time: usosPorDia,
       totalConsum: consumoMes,
     },
   });
@@ -131,13 +121,13 @@ async function updateWaterEquipment(id, { nome, litrosPorUso, usosPorDia, consum
   return {
     id,
     nome,
-    litrosPorUso,
-    usosPorDia,
-    consumoMes,
+    kw,
+    time,
+    totalConsum,
   };
 }
 
-async function deleteWaterEquipment(id) {
+async function deleteEquipment(id) {
   await prisma.waterEquipment.delete({
     where: { equipmentId: id },
   });
@@ -152,11 +142,12 @@ module.exports = {
   createEnergyEquipment,
   getAllEnergyEquipmentsByUser,
   updateEnergyEquipment,
-  deleteEnergyEquipment,
 
   // Água
   createWaterEquipment,
   getWaterEquipmentsByUser,
   updateWaterEquipment,
-  deleteWaterEquipment,
+  
+
+  deleteEquipment
 };
