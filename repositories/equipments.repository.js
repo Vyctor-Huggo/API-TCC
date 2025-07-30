@@ -56,7 +56,7 @@ async function updateEnergyEquipment(id, { nome, kw, time, totalConsum }) {
 
   return {
     id,
-    nome,
+    name,
     kw,
     time,
     totalConsum,
@@ -72,9 +72,9 @@ async function createWaterEquipment({ userId, name, l, time, totalConsum }) {
       name: name,
       userId: userId,
       type: 'WATER',
-      energy: {
+      water: {
         create: {
-          l: l, //recebe em litros
+          flux: l, //recebe em litros
           time: time,
           totalConsum: totalConsum,
         },
@@ -109,7 +109,7 @@ async function updateWaterEquipment(id, { nome, l, usosPorDia, consumoMes }) {
     data: { name: nome },
   });
 
-  await prisma.energyEquipment.update({
+  await prisma.waterEquipment.update({
     where: { equipmentId: id },
     data: {
       flux: l,
@@ -121,20 +121,20 @@ async function updateWaterEquipment(id, { nome, l, usosPorDia, consumoMes }) {
   return {
     id,
     nome,
-    kw,
+    flux: l,
     time,
     totalConsum,
   };
 }
 
-async function deleteEquipment(id) {
-  await prisma.waterEquipment.delete({
-    where: { equipmentId: id },
-  });
+async function deleteElectricEquipment(id) {
+  await prisma.energyEquipment.delete({ where: { equipmentId: id } });
+  await prisma.equipment.delete({ where: { id } });
+}
 
-  await prisma.equipment.delete({
-    where: { id },
-  });
+async function deleteWaterEquipment(id) {
+  await prisma.waterEquipment.delete({ where: { equipmentId: id } });
+  await prisma.equipment.delete({ where: { id } });
 }
 
 module.exports = {
@@ -142,12 +142,11 @@ module.exports = {
   createEnergyEquipment,
   getAllEnergyEquipmentsByUser,
   updateEnergyEquipment,
+  deleteElectricEquipment,
 
   // Água
   createWaterEquipment,
   getWaterEquipmentsByUser,
   updateWaterEquipment,
-  
-
-  deleteEquipment
+  deleteWaterEquipment,
 };

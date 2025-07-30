@@ -37,9 +37,17 @@ exports.updateElectric = async (req, res) => {
 exports.deleteEquipment = async (req, res) => {
   try {
     const { id } = req.params;
-    await equipmentService.removeEquipment(id);
+    const type = req.body.type;
+    console.log('ei, olha aqui: ', type)
+
+    if (!type || !['ELECTRIC', 'WATER'].includes(type)) {
+      return { error: 'Tipo de equipamento inválido ou ausente.' };
+    }
+
+    await equipmentService.removeEquipment(id, type);
     res.status(204).send();
   } catch (err) {
+    console.log("erro aqui: ", err.message,"");
     res.status(400).json({ error: err.message });
   }
 };

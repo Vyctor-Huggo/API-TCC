@@ -62,12 +62,19 @@ async function editWaterEquipment(id, data) {
   return equipmentsRepository.updateWaterEquipment(id, data);
 }
 
-async function removeEquipment(id) {
-  if (!id) {
-    throw new Error('ID do equipamento é obrigatório para deletar.');
+async function removeEquipment(id, type) {
+  if (!id) throw new Error('ID do equipamento é obrigatório.');
+  if (!type) throw new Error('Tipo do equipamento é obrigatório.');
+
+  if (type === 'ELECTRIC') {
+    return await equipmentsRepository.deleteElectricEquipment(id);
   }
 
-  return equipmentsRepository.deleteEquipment(id);
+  if (type === 'WATER') {
+    return await equipmentsRepository.deleteWaterEquipment(id);
+  }
+
+  throw new Error('Tipo de equipamento inválido.');
 }
 
 module.exports = {
