@@ -62,7 +62,7 @@ model EnergyEquipment {
   equipment   Equipment  @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
 
   kw          Float
-  time        Int
+  time        Float
   totalConsum Float
 
   @@map("energy_equipments")
@@ -74,7 +74,7 @@ model WaterEquipment {
   equipment   Equipment  @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
 
   flux        Float   // vazão
-  time        Int
+  time        Float
   totalConsum Float
 
   @@map("water_equipments")
