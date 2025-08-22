@@ -39,27 +39,31 @@ async function getAllEnergyEquipmentsByUser(userId) {
   }));
 }
 
-async function updateEnergyEquipment(id, { nome, kw, time, totalConsum }) {
-  await prisma.equipment.update({
+async function updateEnergyEquipment(id, { name, kw, time, totalConsum }) {
+  // Atualiza o Equipment e o EnergyEquipment juntos
+  const equipment = await prisma.equipment.update({
     where: { id },
-    data: { name: nome },
-  });
-
-  await prisma.energyEquipment.update({
-    where: { equipmentId: id },
     data: {
-      kw: kw,
-      time: time,
-      totalConsum: totalConsum,
+      name, // atualiza o nome
+      energy: {
+        update: {
+          kw,
+          time,
+          totalConsum,
+        },
+      },
+    },
+    include: {
+      energy: true,
     },
   });
 
   return {
-    id,
-    name,
-    kw,
-    time,
-    totalConsum,
+    id: equipment.id,
+    name: equipment.name,
+    kw: equipment.energy?.kw,
+    time: equipment.energy?.time,
+    totalConsum: equipment.energy?.totalConsum,
   };
 }
 
