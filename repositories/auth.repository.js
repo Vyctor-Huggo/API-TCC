@@ -21,6 +21,7 @@
    * @returns {Promise<Object>} Usuário criado
    */
   exports.createUser = async (userData) => {
+    console.log(userData);
     return await prisma.user.create({
       data: userData,
       select: {
