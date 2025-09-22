@@ -30,12 +30,12 @@ function generateToken(user) {
  * @returns {Promise<Object>} O usuário criado
  * @throws {Error} Se o e-mail já estiver cadastrado
  */
-exports.registerUser = async ({ name, email, password }) => {
+exports.registerUser = async ({ name, email, cep, password }) => {
   const existing = await authRepository.findUserByEmail(email);
   if (existing) throw new Error("E-mail já cadastrado");
 
   const hash = await bcrypt.hash(password, 10);
-  return await authRepository.createUser({ name, email, password: hash });
+  return await authRepository.createUser({ name, email, cep, password: hash });
 };
 
 /**

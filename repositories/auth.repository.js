@@ -26,6 +26,7 @@
       select: {
         email: true,
         password: true,
+        cep: true,
         createdAt: true,
       },
     });
