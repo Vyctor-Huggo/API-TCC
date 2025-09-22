@@ -57,8 +57,9 @@ exports.deleteEquipment = async (req, res) => {
  */
 exports.createWater = async (req, res) => {
   try {
-    const { name, l, time, totalConsum } = req.body;
-    const equipment = await equipmentService.addWaterEquipment({ userId: req.user.id, name, l, time, totalConsum });
+    const { name, flux, time, totalConsum } = req.body;
+    console.log({userId: req.user.id, name, flux, time, totalConsum });
+    const equipment = await equipmentService.addWaterEquipment({ userId: req.user.id, name, flux, time, totalConsum });
     res.status(201).json(equipment);
   } catch (err) {
     res.status(400).json({ error: err.message });

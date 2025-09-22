@@ -70,7 +70,8 @@ async function updateEnergyEquipment(id, { name, kw, time, totalConsum }) {
 /**
  * Equipamentos de Água
  */
-async function createWaterEquipment({ userId, name, l, time, totalConsum }) {
+async function createWaterEquipment({ userId, name, flux, time, totalConsum }) {
+  console.log({ userId, name, flux, time, totalConsum });
   const equipment = await prisma.equipment.create({
     data: {
       name: name,
@@ -78,9 +79,9 @@ async function createWaterEquipment({ userId, name, l, time, totalConsum }) {
       type: 'WATER',
       water: {
         create: {
-          flux: l, //recebe em litros
-          time: time,
-          totalConsum: totalConsum,
+          flux, //recebe em litros
+          time,
+          totalConsum,
         },
       },
     },
@@ -101,33 +102,37 @@ async function getWaterEquipmentsByUser(userId) {
   return equipments.map((eq) => ({
     id: eq.id,
     name: eq.name,
-    l: (eq.water?.l || 0) * 1000,
+    flux: eq.water?.flux || 0,
     time: eq.water?.time || 0,
     totalConsum: eq.water?.totalConsum || 0,
   }));
 }
 
-async function updateWaterEquipment(id, { nome, l, usosPorDia, consumoMes }) {
-  await prisma.equipment.update({
+async function updateWaterEquipment(id, { nome, flux, time, totalConsum }) {
+  // Atualiza o Equipment e o EnergyEquipment juntos
+  const equipment = await prisma.equipment.update({
     where: { id },
-    data: { name: nome },
-  });
-
-  await prisma.waterEquipment.update({
-    where: { equipmentId: id },
     data: {
-      flux: l,
-      time: usosPorDia,
-      totalConsum: consumoMes,
+      nome, // atualiza o nome
+      water: {
+        update: {
+          flux,
+          time,
+          totalConsum,
+        },
+      },
+    },
+    include: {
+        water: true,
     },
   });
 
   return {
-    id,
-    nome,
-    flux: l,
-    time,
-    totalConsum,
+    id: equipment.id,
+    name: equipment.name,
+    flux: equipment.water?.flux,
+    time: equipment.water?.time,
+    totalConsum: equipment.water?.totalConsum,
   };
 }
 

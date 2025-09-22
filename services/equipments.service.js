@@ -35,7 +35,8 @@ async function editElectricEquipment(id, data) {
  * Água
  */
 async function addWaterEquipment(data) {
-  if (!data || !data.userId || !data.name || !data.l || !data.time || !data.totalConsum) {
+  console.log(data);
+  if (!data || !data.userId || !data.name || !data.flux || !data.time || !data.totalConsum) {
     throw new Error('Dados incompletos para adicionar o equipamento hídrico.');
   }
 
@@ -55,7 +56,7 @@ async function editWaterEquipment(id, data) {
     throw new Error('ID do equipamento é obrigatório para editar.');
   }
 
-  if (!data || (!data.name && !data.l && !data.time && !data.totalConsum)) {
+  if (!data || (!data.name && !data.flux && !data.time && !data.totalConsum)) {
     throw new Error('Dados insuficientes para atualização do equipamento.');
   }
   
