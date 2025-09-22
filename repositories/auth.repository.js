@@ -45,8 +45,10 @@
         id: true,
         name: true,
         email: true,
-        password: true, // necessário para o bcrypt.compare
-        createdAt: true
+        cep: true,
+        password: true,
+        updatedAt: true,
+        createdAt: true,
       }
     });
   };
@@ -64,6 +66,8 @@
       select: {
         name: true,
         email: true,
+        cep: true,
+        updatedAt: true,
         createdAt: true,
       },
     });
