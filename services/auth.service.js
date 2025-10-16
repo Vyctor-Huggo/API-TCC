@@ -15,7 +15,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
  */
 function generateToken(user) {
   return jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
-    expiresIn: "30m",
+    expiresIn: "30d",
   });
 }
 
@@ -89,5 +89,9 @@ exports.loginUser = async ({ email, password }) => {
     token
   };
 };
+
+exports.updateUserCep = async (userId, { cep }) => {
+  return await authRepository.updateUserById(userId, { cep: cep });
+}
 
 

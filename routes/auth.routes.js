@@ -43,13 +43,8 @@ function authRouter(app) {
    */
   router.get('/me', verifyToken, authController.getProfile);
 
-  /**
-   * @route PUT /auth/update
-   * @summary Atualiza a senha do usuário autenticado
-   * @description Recebe o novo password no corpo e requer um token JWT válido.
-   */
-  router.put('/update', verifyToken, authController.updateUserPassword);
-
+  router.put('/updateCep', verifyToken, authController.updateUserCep);
+  
   // Conectando tudo ao app principal
   app.use('/auth', router);
 }

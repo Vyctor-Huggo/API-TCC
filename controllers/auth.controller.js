@@ -93,5 +93,26 @@ exports.updateUserPassword = async (req, res) => {
   }
 };
 
+exports.updateUserCep = async (req, res) => {
+  console.log("cep: ", req.body);
+  try {
+    const userId = req.user.id; // Pegando o id que o middleware inseriu no req.user
+
+    if (!req.body.cep) {
+      return res.status(400).json({ error: "Novo Cep não fornecido" });
+    }
+
+    const user = await authService.updateUserCep(userId, req.body);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao atualizar perfil: " + err.message });
+  }
+};
+
 
 
