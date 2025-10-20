@@ -13,7 +13,7 @@ exports.sendPasswordResetEmail = async (to, token) => {
   const code = token.slice(-5); // captura os últimos 5 dígitos
   try {
     const info = await transporter.sendMail({
-      from: `"Seu App" <joaojohnson1504@gmail.com>`,
+      from: `"Eco2Eco: Redefinição de Senha" <joaojohnson1504@gmail.com>`,
       to,
       subject: "Código para redefinição de senha",
       html: `
