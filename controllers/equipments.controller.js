@@ -15,7 +15,6 @@ exports.createElectric = async (req, res) => {
 
 exports.getAllElectric = async (req, res) => {
   try {
-    console.log(req.user)
     const equipments = await equipmentService.listElectricEquipments(req.user.id);
 
     res.status(200).json(equipments);
@@ -38,8 +37,6 @@ exports.deleteEquipment = async (req, res) => {
   try {
     const { id } = req.params;
     const type = req.body.type;
-    console.log('ei, olha aqui: ', type)
-
     if (!type || !['ELECTRIC', 'WATER'].includes(type)) {
       return { error: 'Tipo de equipamento inválido ou ausente.' };
     }
@@ -58,7 +55,6 @@ exports.deleteEquipment = async (req, res) => {
 exports.createWater = async (req, res) => {
   try {
     const { name, flux, time, totalConsum } = req.body;
-    console.log({userId: req.user.id, name, flux, time, totalConsum });
     const equipment = await equipmentService.addWaterEquipment({ userId: req.user.id, name, flux, time, totalConsum });
     res.status(201).json(equipment);
   } catch (err) {
@@ -68,7 +64,6 @@ exports.createWater = async (req, res) => {
 
 exports.getAllWater = async (req, res) => {
   try {
-    console.log(req.user)
     const equipments = await equipmentService.listWaterEquipments(req.user.id);
 
     res.status(200).json(equipments);
@@ -80,6 +75,8 @@ exports.getAllWater = async (req, res) => {
 exports.updateWater = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("aaaaaaaaaaa");
+    console.log(req.body);
     const updated = await equipmentService.editWaterEquipment(id, req.body);
     res.status(200).json(updated);
   } catch (err) {

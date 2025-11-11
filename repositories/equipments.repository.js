@@ -108,12 +108,12 @@ async function getWaterEquipmentsByUser(userId) {
   }));
 }
 
-async function updateWaterEquipment(id, { nome, flux, time, totalConsum }) {
+async function updateWaterEquipment(id, { name, flux, time, totalConsum }) {
   // Atualiza o Equipment e o EnergyEquipment juntos
   const equipment = await prisma.equipment.update({
     where: { id },
     data: {
-      nome, // atualiza o nome
+      name, // atualiza o nome
       water: {
         update: {
           flux,
